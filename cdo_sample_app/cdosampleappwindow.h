@@ -24,6 +24,7 @@ public slots:
     void onMediaDevicesListChanged(int, QVariantMap);
     void onLocalPreviewSinkChanged(QString);
     void onCDOPlatformReady(void*, QString);
+    void onConnectClicked();
 signals:
 
 private:

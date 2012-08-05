@@ -23,6 +23,8 @@ public:
 
     void initCDO();
 
+    void connect(QString scopeId, bool pAudio, bool pVideo);
+
 //  Callbacks
     void onCdoReady(CDOH, std::string v);
     void onVideoDevices(std::map<std::string,std::string> devs,bool);
@@ -30,6 +32,7 @@ public:
     void onAudioOutputDevices(std::map<std::string,std::string> devs,bool);
     void onVideoDeviceSet(bool startLocalVideo);
     void onLocalVideoStarted(std::string sinkId);
+    void onConnected(bool succ);
 signals:
 
     void cdoReady(void* ph, QString v);

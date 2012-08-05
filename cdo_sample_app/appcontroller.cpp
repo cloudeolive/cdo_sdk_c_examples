@@ -3,12 +3,18 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <QDebug>
+#include <QTime>
+#include <cdohelpers.h>
+#include <boost/lexical_cast.hpp>
 
 
 namespace
 {
 QVariantMap devsMap2QVariantMap(const std::map<std::string,std::string> in);
 void nop(){}
+
+// Dev layer streamer
+const std::string gStreamerBase = "46.137.126.193:7005/";
 }
 
 AppController::AppController(QObject *parent) :
@@ -21,6 +27,34 @@ void AppController::initCDO()
     qDebug() << "Initializing CDO";
     CDOReadyHandler rH = boost::bind(&AppController::onCdoReady, this, _1, _2);
     _cdoCtrl.initPlatform(rH);
+}
+
+void AppController::connect(QString scopeId, bool pAudio, bool pVideo)
+{
+    qDebug() << "Establishing a connection to scope with id: " << scopeId;
+    CDOConnectionDescriptor descr;
+    descr.autopublishAudio = pAudio;
+    descr.autopublishVideo = pVideo;
+    QTime m(0,0,0);
+    qsrand(m.secsTo(QTime::currentTime()));
+    int uId = qrand() % 1000;
+    descr.token = CDOHelpers::stdString2CdoString(
+                boost::lexical_cast<std::string>(uId));
+    descr.url = CDOHelpers::stdString2CdoString(
+                gStreamerBase + scopeId.toStdString());
+
+    descr.lowVideoStream.maxBitRate = 64;
+    descr.lowVideoStream.maxFps = 5;
+    descr.lowVideoStream.maxHeight = 240;
+    descr.lowVideoStream.maxWidth = 320;
+
+    descr.highVideoStream.maxBitRate = 512;
+    descr.highVideoStream.maxWidth = 640;
+    descr.highVideoStream.maxHeight = 480;
+    descr.highVideoStream.maxFps = 24;
+
+    CDOConnectedHandler rh = boost::bind(&AppController::onConnected, this, _1);
+    _cdoCtrl.connect(rh, &descr);
 }
 
 
@@ -113,6 +147,12 @@ void AppController::onLocalVideoStarted(std::string sinkId)
     QString qSinkId = QString::fromStdString(sinkId);
     qDebug() << "Local preview started; Sink id: " << qSinkId;
     emit localVideoSinkChanged(qSinkId);
+}
+
+void AppController::onConnected(bool succ)
+{
+    qDebug() << "Got connected result: " << succ;
+
 }
 
 namespace

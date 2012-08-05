@@ -92,6 +92,14 @@ void CloudeoCtrl::startLocalVideo(CDOLocalVideoStartedHandler rH)
 }
 
 
+void CloudeoCtrl::connect(CDOConnectedHandler rH,
+                          CDOConnectionDescriptor* descr)
+{
+    CDOConnectedHandler* copy = new CDOConnectedHandler();
+    memcpy(copy, &rH, sizeof(*copy));
+    cdo_connect(&CloudeoCtrl::onConnected, _platformHandle, copy, descr);
+}
+
 
 void CloudeoCtrl::onPlatformReady(void* o, const CDOError* err, CDOH h)
 {
@@ -138,4 +146,12 @@ void CloudeoCtrl::onLocalPreviewStarted(void* o, const CDOError* e,
     CDOLocalVideoStartedHandler* rH = (CDOLocalVideoStartedHandler*) o;
     (*rH)(CDOHelpers::cdoString2Std(v));
     delete rH;
+}
+
+void CloudeoCtrl::onConnected(void* o, const CDOError* e)
+{
+    CDOConnectedHandler* rH = (CDOConnectedHandler*)o;
+    (*rH)(cdo_no_error(e));
+    delete rH;
+
 }

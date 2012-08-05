@@ -59,6 +59,15 @@ void CdoSampleAppWindow::onLocalPreviewSinkChanged(QString sinkId)
 }
 
 
+void CdoSampleAppWindow::onConnectClicked()
+{
+    qDebug() << "Establishing a connection";
+    QString scopeId = ui->scopeIdTxt->text();
+    bool publishAudio = ui->publishAudioChck->checkState() == Qt::Checked;
+    bool publishVideo = ui->publishVideoChck->checkState() == Qt::Checked;
+    _appController.connect(scopeId, publishAudio, publishVideo);
+}
+
 void CdoSampleAppWindow::setupBindings()
 {
     QObject::connect(ui->playTestSndBtn, SIGNAL(clicked()),
@@ -74,6 +83,9 @@ void CdoSampleAppWindow::setupBindings()
     QObject::connect(&_appController,
                      SIGNAL(localVideoSinkChanged(QString)),
                      this, SLOT(onLocalPreviewSinkChanged(QString)));
+
+    QObject::connect(ui->connectBtn, SIGNAL(clicked()),
+                     this, SLOT(onConnectClicked()));
 }
 
 

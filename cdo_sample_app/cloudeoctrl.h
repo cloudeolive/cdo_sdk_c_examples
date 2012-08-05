@@ -12,6 +12,7 @@ typedef boost::function<void(CDOH,std::string)> CDOReadyHandler;
 typedef boost::function<void(std::map<std::string,std::string>)> CDODevsHandler;
 typedef boost::function<void()> CDOSetDevHandler;
 typedef boost::function<void(std::string)> CDOLocalVideoStartedHandler;
+typedef boost::function<void(bool)> CDOConnectedHandler;
 
 class CloudeoCtrl
 {
@@ -31,15 +32,20 @@ public:
 
     void startLocalVideo(CDOLocalVideoStartedHandler rH);
 
+    void connect(CDOConnectedHandler rh, CDOConnectionDescriptor* descr);
+
     static void onPlatformReady(void* o, const CDOError* err, CDOH h);
 
     static void onVersion(void* o, const CDOError* e, const CDOString* v);
 
-    static void onDevices(void* o, const CDOError* e, CDODevice* devs, size_t len);
+    static void onDevices(void* o, const CDOError* e, CDODevice* devs,
+                          size_t len);
 
     static void onSetDevice(void* o, const CDOError* e);
 
-    static void onLocalPreviewStarted(void* o, const CDOError* e, const CDOString* v);
+    static void onLocalPreviewStarted(void* o, const CDOError* e,
+                                      const CDOString* v);
+    static void onConnected(void* o, const CDOError* e);
 
 private:
 
