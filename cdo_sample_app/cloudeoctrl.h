@@ -35,6 +35,7 @@ public:
     void startLocalVideo(CDOLocalVideoStartedHandler rH);
 
     void connect(CDOConnectedHandler rh, CDOConnectionDescriptor* descr);
+    void disconnect(std::string scopeId);
 
     void publish(std::string scopeId, std::string what);
     void unpublish(std::string scopeId, std::string what);

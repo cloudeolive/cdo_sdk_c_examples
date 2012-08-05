@@ -82,6 +82,14 @@ void AppController::playTestSndClicked()
     _cdoCtrl.playTestSound();
 }
 
+void AppController::disconnectBtnClicked()
+{
+    qDebug() << "Terminating connection";
+    _cdoCtrl.disconnect(_scopeId);
+    _connected = false;
+}
+
+
 void AppController::videoPublishStateChanged(bool state)
 {
     if(_connected)

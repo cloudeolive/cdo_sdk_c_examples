@@ -25,6 +25,7 @@ public:
 
     void connect(QString scopeId, bool pAudio, bool pVideo);
 
+
 //  Callbacks
     void onCdoReady(CDOH, std::string v);
     void onVideoDevices(std::map<std::string,std::string> devs,bool);
@@ -46,6 +47,7 @@ signals:
     void remoteVideoSinkChanged(QString);
 public slots:
 
+    void disconnectBtnClicked();
     void playTestSndClicked();
     void videoPublishStateChanged(bool state);
     void audioPublishStateChanged(bool state);

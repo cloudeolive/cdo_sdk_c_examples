@@ -110,6 +110,14 @@ void CloudeoCtrl::connect(CDOConnectedHandler rH,
     cdo_connect(&CloudeoCtrl::onConnected, _platformHandle, copy, descr);
 }
 
+void CloudeoCtrl::disconnect(std::string scopeId)
+{
+    CDOString cdoScopeId = CDOHelpers::stdString2CdoString(scopeId);
+    cdo_disconnect(&CloudeoCtrl::nopRHandler, _platformHandle, this,
+                   &cdoScopeId);
+}
+
+
 void CloudeoCtrl::publish(std::string scopeId, std::string what)
 {
     CDOString cdoScopeId = CDOHelpers::stdString2CdoString(scopeId);

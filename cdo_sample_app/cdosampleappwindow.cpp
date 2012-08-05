@@ -82,6 +82,8 @@ void CdoSampleAppWindow::setupBindings()
 {
     QObject::connect(ui->playTestSndBtn, SIGNAL(clicked()),
                      &_appController,  SLOT(playTestSndClicked()));
+    QObject::connect(ui->disconnectBtn, SIGNAL(clicked()),
+                     &_appController,  SLOT(disconnectBtnClicked()));
 
 
     QObject::connect(&_appController, SIGNAL(cdoReady(void*,QString)),
