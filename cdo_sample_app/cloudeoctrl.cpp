@@ -23,6 +23,16 @@ void CloudeoCtrl::initPlatform(CDOReadyHandler readyHandler)
 
 }
 
+void nopRHandler(void* o, const CDOError* e)
+{
+}
+
+void CloudeoCtrl::addPlatformListener(CDOServiceListener* listener)
+{
+    cdo_add_service_listener(&nopRHandler,_platformHandle, this, listener);
+}
+
+
 
 void CloudeoCtrl::getVideoCaptureDeviceNames(CDODevsHandler resultHandler)
 {

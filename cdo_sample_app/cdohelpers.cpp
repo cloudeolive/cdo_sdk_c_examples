@@ -23,3 +23,14 @@ std::string CDOHelpers::cdoString2Std(const CDOString* src)
 {
     return std::string(src->body, src->length);
 }
+
+QString CDOHelpers::cdoString2QString(const CDOString* src)
+{
+    return QString::fromAscii(src->body, src->length);
+}
+
+
+bool CDOHelpers::stringEq(const CDOString* a, const std::string& b)
+{
+    return b == CDOHelpers::cdoString2Std(a);
+}

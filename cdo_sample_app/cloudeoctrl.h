@@ -21,6 +21,8 @@ public:
 
     void initPlatform(CDOReadyHandler readyHandler);
 
+    void addPlatformListener(CDOServiceListener* listener);
+
     void getVideoCaptureDeviceNames(CDODevsHandler);
     void getAudioCaptureDeviceNames(CDODevsHandler);
     void getAudioOutputDeviceNames(CDODevsHandler);

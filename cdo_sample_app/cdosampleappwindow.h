@@ -23,6 +23,7 @@ public slots:
 
     void onMediaDevicesListChanged(int, QVariantMap);
     void onLocalPreviewSinkChanged(QString);
+    void onRemotePreviewSinkChanged(QString);
     void onCDOPlatformReady(void*, QString);
     void onConnectClicked();
 signals:

@@ -57,6 +57,18 @@ void AppController::connect(QString scopeId, bool pAudio, bool pVideo)
     _cdoCtrl.connect(rh, &descr);
 }
 
+void AppController::onUserEvent(void* opaque, const CDOUserStateChangedEvent* e)
+{
+    ((AppController*) opaque)->onUserEvent(e);
+
+}
+
+void AppController::onMediaEvent(void* opaque,
+                                 const CDOUserStateChangedEvent* e)
+{
+    ((AppController*) opaque)->onMediaEvent(e);
+}
+
 
 /**
   * Slots
@@ -82,6 +94,13 @@ void AppController::onCdoReady(CDOH pH, std::string version)
     qDebug() << "CDO Initialized, version: " << qVersion <<
                 ". Continuing with initialization";
     emit cdoReady(pH, qVersion);
+
+    CDOServiceListener listener;
+    memset(&listener,0,sizeof(listener));
+    listener.onUserEvent = &AppController::onUserEvent;
+    listener.onMediaStreamEvent = &AppController::onMediaEvent;
+    listener.opaque = this;
+    _cdoCtrl.addPlatformListener(&listener);
 
     CDODevsHandler rH = boost::bind(&AppController::onVideoDevices, this, _1,
                                     true);
@@ -154,6 +173,32 @@ void AppController::onConnected(bool succ)
     qDebug() << "Got connected result: " << succ;
 
 }
+
+
+void AppController::onUserEvent(const CDOUserStateChangedEvent* e)
+{
+    qDebug() << "Got new user event";
+    if(e->isConnected && e->videoPublished)
+        emit remoteVideoSinkChanged(
+                    CDOHelpers::cdoString2QString(&(e->videoSinkId)));
+    else
+        emit remoteVideoSinkChanged(QString());
+
+}
+
+void AppController::onMediaEvent(const CDOUserStateChangedEvent* e)
+{
+    qDebug() << "Got new media event, related to media type: " <<
+                CDOHelpers::cdoString2QString(&(e->mediaType));
+    if(CDOHelpers::stringEq(&(e->mediaType), CDO_MEDIA_TYPE_VIDEO))
+    {
+        QString sinkId = e->videoPublished ?
+                    CDOHelpers::cdoString2QString(&(e->videoSinkId)) :
+                    QString();
+        emit remoteVideoSinkChanged(sinkId);
+    }
+}
+
 
 namespace
 {

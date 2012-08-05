@@ -54,8 +54,18 @@ void CdoSampleAppWindow::onCDOPlatformReady(void* pH, QString v)
 
 void CdoSampleAppWindow::onLocalPreviewSinkChanged(QString sinkId)
 {
+    qDebug() << "Rendering local sink with id: " << sinkId;
     ui->localRenderer->stopRender();
     ui->localRenderer->startRender(sinkId.toStdString());
+}
+void CdoSampleAppWindow::onRemotePreviewSinkChanged(QString sinkId)
+{
+    qDebug() << "Rendering remote sink with id: " << sinkId;
+    ui->remoteRenderer->stopRender();
+    if(sinkId.length() > 0)
+    {
+        ui->remoteRenderer->startRender(sinkId.toStdString());
+    }
 }
 
 
@@ -80,12 +90,16 @@ void CdoSampleAppWindow::setupBindings()
     QObject::connect(&_appController,
                      SIGNAL(mediaDevicesListChanged(int,QVariantMap)),
                      this, SLOT(onMediaDevicesListChanged(int,QVariantMap)));
+
     QObject::connect(&_appController,
                      SIGNAL(localVideoSinkChanged(QString)),
                      this, SLOT(onLocalPreviewSinkChanged(QString)));
+    QObject::connect(&_appController, SIGNAL(remoteVideoSinkChanged(QString)),
+                     this, SLOT(onRemotePreviewSinkChanged(QString)));
 
     QObject::connect(ui->connectBtn, SIGNAL(clicked()),
                      this, SLOT(onConnectClicked()));
+
 }
 
 

@@ -33,6 +33,9 @@ public:
     void onVideoDeviceSet(bool startLocalVideo);
     void onLocalVideoStarted(std::string sinkId);
     void onConnected(bool succ);
+
+    static void onUserEvent(void* opaque, const CDOUserStateChangedEvent*);
+    static void onMediaEvent(void* opaque, const CDOUserStateChangedEvent*);
 signals:
 
     void cdoReady(void* ph, QString v);
@@ -40,12 +43,17 @@ signals:
     void mediaDevicesListChanged(int,QVariantMap);
 
     void localVideoSinkChanged(QString);
+    void remoteVideoSinkChanged(QString);
 public slots:
 
     void playTestSndClicked();
 
 
 private:
+
+    void onUserEvent(const CDOUserStateChangedEvent*);
+    void onMediaEvent(const CDOUserStateChangedEvent*);
+
 
     CloudeoCtrl _cdoCtrl;
     
