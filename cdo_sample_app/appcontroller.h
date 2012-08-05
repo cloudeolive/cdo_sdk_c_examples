@@ -47,6 +47,8 @@ signals:
 public slots:
 
     void playTestSndClicked();
+    void videoPublishStateChanged(bool state);
+    void audioPublishStateChanged(bool state);
 
 
 private:
@@ -56,7 +58,8 @@ private:
 
 
     CloudeoCtrl _cdoCtrl;
-    
+    bool _connected;
+    std::string _scopeId;
 };
 
 #endif // APPCONTROLLER_H

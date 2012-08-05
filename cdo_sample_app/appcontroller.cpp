@@ -18,7 +18,7 @@ const std::string gStreamerBase = "46.137.126.193:7005/";
 }
 
 AppController::AppController(QObject *parent) :
-    QObject(parent)
+    QObject(parent), _connected(false)
 {
 }
 
@@ -52,7 +52,7 @@ void AppController::connect(QString scopeId, bool pAudio, bool pVideo)
     descr.highVideoStream.maxWidth = 640;
     descr.highVideoStream.maxHeight = 480;
     descr.highVideoStream.maxFps = 24;
-
+    _scopeId = scopeId.toStdString();
     CDOConnectedHandler rh = boost::bind(&AppController::onConnected, this, _1);
     _cdoCtrl.connect(rh, &descr);
 }
@@ -81,6 +81,41 @@ void AppController::playTestSndClicked()
     qDebug() << "Playing test sound";
     _cdoCtrl.playTestSound();
 }
+
+void AppController::videoPublishStateChanged(bool state)
+{
+    if(_connected)
+    {
+        if(state)
+        {
+            qDebug() << "Publishing video";
+            _cdoCtrl.publish(_scopeId, CDO_MEDIA_TYPE_VIDEO);
+        }
+        else
+        {
+            qDebug() << "Unpublishing video";
+            _cdoCtrl.unpublish(_scopeId, CDO_MEDIA_TYPE_VIDEO);
+        }
+    }
+}
+
+void AppController::audioPublishStateChanged(bool state)
+{
+    if(_connected)
+    {
+        if(state)
+        {
+            qDebug() << "Publishing audio";
+            _cdoCtrl.publish(_scopeId, CDO_MEDIA_TYPE_AUDIO);
+        }
+        else
+        {
+            qDebug() << "Unpublishing audio";
+            _cdoCtrl.unpublish(_scopeId, CDO_MEDIA_TYPE_AUDIO);
+        }
+    }
+}
+
 
 
 /**
@@ -171,7 +206,7 @@ void AppController::onLocalVideoStarted(std::string sinkId)
 void AppController::onConnected(bool succ)
 {
     qDebug() << "Got connected result: " << succ;
-
+    _connected = true;
 }
 
 

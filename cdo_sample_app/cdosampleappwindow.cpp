@@ -100,6 +100,10 @@ void CdoSampleAppWindow::setupBindings()
     QObject::connect(ui->connectBtn, SIGNAL(clicked()),
                      this, SLOT(onConnectClicked()));
 
+    QObject::connect(ui->publishAudioChck, SIGNAL(clicked(bool)),
+                     &_appController, SLOT(audioPublishStateChanged(bool)));
+    QObject::connect(ui->publishVideoChck, SIGNAL(clicked(bool)),
+                     &_appController, SLOT(videoPublishStateChanged(bool)));
 }
 
 

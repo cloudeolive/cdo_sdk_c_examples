@@ -36,6 +36,9 @@ public:
 
     void connect(CDOConnectedHandler rh, CDOConnectionDescriptor* descr);
 
+    void publish(std::string scopeId, std::string what);
+    void unpublish(std::string scopeId, std::string what);
+
     static void onPlatformReady(void* o, const CDOError* err, CDOH h);
 
     static void onVersion(void* o, const CDOError* e, const CDOString* v);
