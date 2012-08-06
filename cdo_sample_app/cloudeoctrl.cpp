@@ -4,8 +4,9 @@
 
 #include <string>
 #include <string.h>
+#include <window>
 
-#define CLOUDEO_SDK_HOME "C:/Users/tkozak/dev/smbuild/native_api/cloudeo_sdk_1.16.2.1"
+#define CLOUDEO_SDK_HOME "cloudeo_sdk"
 
 const std::string gLibsPath = CLOUDEO_SDK_HOME;
 
@@ -16,11 +17,9 @@ CloudeoCtrl::CloudeoCtrl()
 
 void CloudeoCtrl::initPlatform(CDOReadyHandler readyHandler)
 {
-    _readyHandler = readyHandler;
     CDOInitOptions options;
     CDOHelpers::stdString2CdoString(&options.logicLibPath, gLibsPath );
     cdo_init_platform(&CloudeoCtrl::onPlatformReady,&options,this);
-
 }
 
 void nopRHandler(void* o, const CDOError* e)
