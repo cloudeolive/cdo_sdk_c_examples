@@ -23,7 +23,7 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-CLOUDEO_SDK_HOME = C:/Users/tkozak/dev/smbuild/native_api/cloudeo_sdk_1.16.2.1
+CLOUDEO_SDK_HOME = $$PWD/../../cloudeo_sdk
 
 #DEFINES += "CLOUDEO_SDK_HOME="\"$${CLOUDEO_SDK_HOME}\""
 
