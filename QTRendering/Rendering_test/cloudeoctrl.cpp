@@ -4,7 +4,7 @@
 
 #include <string>
 #include <string.h>
-
+#include <windows.h>
 #define CLOUDEO_SDK_HOME "cloudeo_sdk"
 
 const std::string gLibsPath = CLOUDEO_SDK_HOME;
@@ -12,8 +12,15 @@ const std::string gLibsPath = CLOUDEO_SDK_HOME;
 
 CloudeoCtrl::CloudeoCtrl(MainWindow* window): _window(window)
 {
+    char exePath[2048];
+    GetModuleFileNameA(NULL,exePath,2048);
+    int pathSize = strlen(exePath);
+    int dirPathSize = pathSize - strlen("cdo_sample_app.exe");
+    std::string sdkPath(exePath, dirPathSize);
+    sdkPath += gLibsPath;
+
     CDOInitOptions options;
-    CDOHelpers::stdString2CdoString(&options.logicLibPath, gLibsPath );
+    CDOHelpers::stdString2CdoString(&options.logicLibPath, sdkPath);
     cdo_init_platform(&CloudeoCtrl::onPlatformReady,&options,this);
 }
 

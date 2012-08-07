@@ -4,7 +4,9 @@
 
 #include <string>
 #include <string.h>
-#include <window>
+#include <windows.h>
+#include <QDebug>
+
 
 #define CLOUDEO_SDK_HOME "cloudeo_sdk"
 
@@ -17,8 +19,15 @@ CloudeoCtrl::CloudeoCtrl()
 
 void CloudeoCtrl::initPlatform(CDOReadyHandler readyHandler)
 {
+    char exePath[2048];
+    GetModuleFileNameA(NULL,exePath,2048);
+    int pathSize = strlen(exePath);
+    int dirPathSize = pathSize - strlen("cdo_sample_app.exe");
+    std::string sdkPath(exePath, dirPathSize);
+    sdkPath += gLibsPath;
     CDOInitOptions options;
-    CDOHelpers::stdString2CdoString(&options.logicLibPath, gLibsPath );
+    CDOHelpers::stdString2CdoString(&options.logicLibPath, sdkPath );
+    _readyHandler = readyHandler;
     cdo_init_platform(&CloudeoCtrl::onPlatformReady,&options,this);
 }
 
@@ -144,12 +153,26 @@ void CloudeoCtrl::onPlatformReady(void* o, const CDOError* err, CDOH h)
         ctrl->_platformHandle = h;
         cdo_get_version(&CloudeoCtrl::onVersion,h, ctrl);
     }
+    else
+    {
+        QString errorStr =
+                QString::fromAscii(err->err_message.body,
+                                   err->err_message.length );
+        qWarning() << "Failed to initialize the Cloudeo platform, due to: "
+                 << errorStr;
+    }
 }
 
 void CloudeoCtrl::onVersion(void* o, const CDOError* e, const CDOString* v)
 {
     CloudeoCtrl* ctrl = (CloudeoCtrl*) o;
-    ctrl->_readyHandler(ctrl->_platformHandle, std::string(v->body, v->length));
+    try
+    {
+        ctrl->_readyHandler(ctrl->_platformHandle, std::string(v->body, v->length));
+    } catch(const std::exception& exception)
+    {
+        qDebug() << "Got an exxception: " << exception.what();
+    }
 }
 
 

@@ -25,9 +25,11 @@ HEADERS  += cdosampleappwindow.h \
 
 FORMS    += cdosampleappwindow.ui
 
+BOOST_HOME = $$PWD/../../../smlibs/include/boost-1_49
+CDO_HOME = $$PWD/../cloudeo_sdk
+
 win32: LIBS += -L$$PWD/../../../smbuild/native_api/cloudeo_sdk_1.16.2.1/ -lcdo_sdk
 
-INCLUDEPATH += $$PWD/../../../smbuild/native_api/cloudeo_sdk_1.16.2.1
-INCLUDEPATH += $$PWD/../../../smlibs/include
-INCLUDEPATH += $$PWD/../../../smlibs/include/boost-1_49
+INCLUDEPATH += $$CDO_HOME
+INCLUDEPATH += $$BOOST_HOME
 DEPENDPATH += $$PWD/../../../smbuild/native_api/cloudeo_sdk_1.16.2.1
