@@ -1,12 +1,12 @@
-#ifndef CDOSAMPLEAPPWINDOW_H
-#define CDOSAMPLEAPPWINDOW_H
+#ifndef ADLSAMPLEAPPWINDOW_H
+#define ADLSAMPLEAPPWINDOW_H
 
 #include <QMainWindow>
 #include <appcontroller.h>
 #include <QMap>
 #include <QVariant>
 #include <QString>
-#include <cloudeo_sdk.h>
+#include <addlive_sdk.h>
 namespace Ui {
 class CdoSampleAppWindow;
 }
@@ -24,8 +24,9 @@ public slots:
     void onMediaDevicesListChanged(int, QVariantMap);
     void onLocalPreviewSinkChanged(QString);
     void onRemotePreviewSinkChanged(QString);
-    void onCDOPlatformReady(void*, QString);
+    void onADLPlatformReady(void*, QString);
     void onConnectClicked();
+    void onConnected();
 signals:
 
 private:
@@ -37,4 +38,4 @@ private:
     AppController _appController;
 };
 
-#endif // CDOSAMPLEAPPWINDOW_H
+#endif // ADLSAMPLEAPPWINDOW_H

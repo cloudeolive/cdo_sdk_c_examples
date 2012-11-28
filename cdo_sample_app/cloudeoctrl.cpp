@@ -7,151 +7,180 @@
 #include <windows.h>
 #include <QDebug>
 
+#include <cryptlite/sha256.h>
+#include <cryptlite/hmac.h>
 
-#define CLOUDEO_SDK_HOME "cloudeo_sdk"
+#include <sstream>
+
+#define CLOUDEO_SDK_HOME "addlive_sdk"
 
 const std::string gLibsPath = CLOUDEO_SDK_HOME;
+const std::string CloudeoCtrl::APP_SECRET = "AddLiveAPIKey_Be3eyOHLkHJGlw37w71XNPVvIk6zHP3giRqX2hVrqXjuOgNJQVLNyyDVqJTMV6wjYQnrnTVcLx9MTJilmGKvLgF2hw1SbtoWBSza";
 
 
 CloudeoCtrl::CloudeoCtrl()
 {
 }
 
-void CloudeoCtrl::initPlatform(CDOReadyHandler readyHandler)
+void CloudeoCtrl::initPlatform(ADLReadyHandler readyHandler)
 {
     char exePath[2048];
     GetModuleFileNameA(NULL,exePath,2048);
     int pathSize = strlen(exePath);
-    int dirPathSize = pathSize - strlen("cdo_sample_app.exe");
+    int dirPathSize = pathSize - strlen("adl_sample_app.exe");
     std::string sdkPath(exePath, dirPathSize);
     sdkPath += gLibsPath;
-    CDOInitOptions options;
-    CDOHelpers::stdString2CdoString(&options.logicLibPath, sdkPath );
+    ADLInitOptions options;
+    ADLHelpers::stdString2ADLString(&options.logicLibPath, sdkPath );
     _readyHandler = readyHandler;
-    cdo_init_platform(&CloudeoCtrl::onPlatformReady,&options,this);
+    adl_init_platform(&CloudeoCtrl::onPlatformReady,&options,this);
 }
 
-void nopRHandler(void* o, const CDOError* e)
+void nopRHandler(void* o, const ADLError* e)
 {
 }
 
-void CloudeoCtrl::addPlatformListener(CDOServiceListener* listener)
+void CloudeoCtrl::addPlatformListener(ADLServiceListener* listener)
 {
-    cdo_add_service_listener(&nopRHandler,_platformHandle, this, listener);
+    adl_add_service_listener(&nopRHandler,_platformHandle, this, listener);
 }
 
 
 
-void CloudeoCtrl::getVideoCaptureDeviceNames(CDODevsHandler resultHandler)
+void CloudeoCtrl::getVideoCaptureDeviceNames(ADLDevsHandler resultHandler)
 {
-    CDODevsHandler * copy = new CDODevsHandler();
+    ADLDevsHandler * copy = new ADLDevsHandler();
     memcpy(copy, &resultHandler, sizeof(*copy));
-    cdo_get_video_capture_device_names(&CloudeoCtrl::onDevices,_platformHandle,
+    adl_get_video_capture_device_names(&CloudeoCtrl::onDevices,_platformHandle,
                                        copy);
 }
 
-void CloudeoCtrl::getAudioCaptureDeviceNames(CDODevsHandler  resultHandler)
+void CloudeoCtrl::getAudioCaptureDeviceNames(ADLDevsHandler  resultHandler)
 {
-    CDODevsHandler * copy = new CDODevsHandler();
+    ADLDevsHandler * copy = new ADLDevsHandler();
     memcpy(copy, &resultHandler, sizeof(*copy));
-    cdo_get_audio_capture_device_names(&CloudeoCtrl::onDevices,_platformHandle,
+    adl_get_audio_capture_device_names(&CloudeoCtrl::onDevices,_platformHandle,
                                        copy);
 }
 
-void CloudeoCtrl::getAudioOutputDeviceNames(CDODevsHandler resultHandler)
+void CloudeoCtrl::getAudioOutputDeviceNames(ADLDevsHandler resultHandler)
 {
-    CDODevsHandler * copy = new CDODevsHandler();
+    ADLDevsHandler * copy = new ADLDevsHandler();
     memcpy(copy, &resultHandler, sizeof(*copy));
-    cdo_get_audio_output_device_names(&CloudeoCtrl::onDevices,_platformHandle,
+    adl_get_audio_output_device_names(&CloudeoCtrl::onDevices,_platformHandle,
                                        copy);
 }
 
-void CloudeoCtrl::setVideoCaptureDevice(CDOSetDevHandler rH, std::string dev)
+void CloudeoCtrl::setVideoCaptureDevice(ADLSetDevHandler rH, std::string dev)
 {
-    CDOString devId = CDOHelpers::stdString2CdoString(dev);
-    CDOSetDevHandler * copy = new CDOSetDevHandler();
+    ADLString devId = ADLHelpers::stdString2ADLString(dev);
+    ADLSetDevHandler * copy = new ADLSetDevHandler();
     memcpy(copy, &rH, sizeof(*copy));
 
-    cdo_set_video_capture_device(&CloudeoCtrl::onSetDevice, _platformHandle,
+    adl_set_video_capture_device(&CloudeoCtrl::onSetDevice, _platformHandle,
                                  copy, &devId);
 }
 
-void CloudeoCtrl::setAudioCaptureDevice(CDOSetDevHandler rH,std::string dev)
+void CloudeoCtrl::setAudioCaptureDevice(ADLSetDevHandler rH,std::string dev)
 {
-    CDOString devId = CDOHelpers::stdString2CdoString(dev);
-    CDOSetDevHandler * copy = new CDOSetDevHandler();
+    ADLString devId = ADLHelpers::stdString2ADLString(dev);
+    ADLSetDevHandler * copy = new ADLSetDevHandler();
     memcpy(copy, &rH, sizeof(*copy));
-    cdo_set_audio_capture_device(&CloudeoCtrl::onSetDevice, _platformHandle,
+    adl_set_audio_capture_device(&CloudeoCtrl::onSetDevice, _platformHandle,
                                  copy, &devId);
 }
 
-void CloudeoCtrl::setAudioOutputDevice(CDOSetDevHandler rH, std::string dev)
+void CloudeoCtrl::setAudioOutputDevice(ADLSetDevHandler rH, std::string dev)
 {
-    CDOString devId = CDOHelpers::stdString2CdoString(dev);
-    CDOSetDevHandler * copy = new CDOSetDevHandler();
+    ADLString devId = ADLHelpers::stdString2ADLString(dev);
+    ADLSetDevHandler * copy = new ADLSetDevHandler();
     memcpy(copy, &rH, sizeof(*copy));
-    cdo_set_audio_output_device(&CloudeoCtrl::onSetDevice, _platformHandle,
+    adl_set_audio_output_device(&CloudeoCtrl::onSetDevice, _platformHandle,
                                  copy, &devId);
 }
 
 void CloudeoCtrl::playTestSound()
 {
-    cdo_start_playing_test_sound(&CloudeoCtrl::nopRHandler, _platformHandle,
+    adl_start_playing_test_sound(&CloudeoCtrl::nopRHandler, _platformHandle,
                                  this);
 }
 
-void CloudeoCtrl::startLocalVideo(CDOLocalVideoStartedHandler rH)
+void CloudeoCtrl::startLocalVideo(ADLLocalVideoStartedHandler rH)
 {
-    CDOLocalVideoStartedHandler * copy = new CDOLocalVideoStartedHandler();
+    ADLLocalVideoStartedHandler * copy = new ADLLocalVideoStartedHandler();
     memcpy(copy, &rH, sizeof(*copy));
-    cdo_start_local_video(&CloudeoCtrl::onLocalPreviewStarted, _platformHandle,
+    adl_start_local_video(&CloudeoCtrl::onLocalPreviewStarted, _platformHandle,
                           copy);
 
 }
 
 
-void CloudeoCtrl::connect(CDOConnectedHandler rH,
-                          CDOConnectionDescriptor* descr)
+void CloudeoCtrl::connect(ADLConnectedHandler rH,
+                          ADLConnectionDescriptor* descr, std::string scopeId)
 {
-    CDOConnectedHandler* copy = new CDOConnectedHandler();
+    ADLConnectedHandler* copy = new ADLConnectedHandler();
     memcpy(copy, &rH, sizeof(*copy));
-    cdo_connect(&CloudeoCtrl::onConnected, _platformHandle, copy, descr);
+
+    /*
+var authDataBody =
+        APP_ID + // application id
+            roomId + // scope
+            tokenId + // user id
+            authDetails.salt + // salt
+            validUntil + // valid until timestamp
+            SHARED_SECRET;         // shared secret
+
+*/
+    std::stringstream signatureRawBuilder;
+        signatureRawBuilder << APP_ID << scopeId <<
+        descr->authDetails.userId <<
+           ADLHelpers::ADLString2Std(&(descr->authDetails.salt)) <<
+           descr->authDetails.expires << APP_SECRET;
+
+
+
+        using namespace cryptlite;
+        std::string signature = sha256::hash_hex(signatureRawBuilder.str());
+        qDebug() << "Got signature: " << QString::fromStdString(signature);
+    descr->authDetails.signature = ADLHelpers::stdString2ADLString(signature);
+    adl_connect(&CloudeoCtrl::onConnected, _platformHandle, descr, descr);
 }
 
 void CloudeoCtrl::disconnect(std::string scopeId)
 {
-    CDOString cdoScopeId = CDOHelpers::stdString2CdoString(scopeId);
-    cdo_disconnect(&CloudeoCtrl::nopRHandler, _platformHandle, this,
+    ADLString cdoScopeId = ADLHelpers::stdString2ADLString(scopeId);
+    adl_disconnect(&CloudeoCtrl::nopRHandler, _platformHandle, this,
                    &cdoScopeId);
 }
 
 
 void CloudeoCtrl::publish(std::string scopeId, std::string what)
 {
-    CDOString cdoScopeId = CDOHelpers::stdString2CdoString(scopeId);
-    CDOString cdoWhat = CDOHelpers::stdString2CdoString(what);
-    cdo_publish(&CloudeoCtrl::nopRHandler,_platformHandle,0,
-                &cdoScopeId, &cdoWhat);
+    ADLString cdoScopeId = ADLHelpers::stdString2ADLString(scopeId);
+    ADLString cdoWhat = ADLHelpers::stdString2ADLString(what);
+    adl_publish(&CloudeoCtrl::nopRHandler,_platformHandle,0,
+                &cdoScopeId, &cdoWhat, NULL);
 }
 
 void CloudeoCtrl::unpublish(std::string scopeId, std::string what)
 {
-    CDOString cdoScopeId = CDOHelpers::stdString2CdoString(scopeId);
-    CDOString cdoWhat = CDOHelpers::stdString2CdoString(what);
+    ADLString cdoScopeId = ADLHelpers::stdString2ADLString(scopeId);
+    ADLString cdoWhat = ADLHelpers::stdString2ADLString(what);
 
-    cdo_unpublish(&CloudeoCtrl::nopRHandler,_platformHandle,0,
+    adl_unpublish(&CloudeoCtrl::nopRHandler,_platformHandle,0,
                 &cdoScopeId, &cdoWhat);
 
 }
 
 
-void CloudeoCtrl::onPlatformReady(void* o, const CDOError* err, CDOH h)
+void CloudeoCtrl::onPlatformReady(void* o, const ADLError* err, ADLH h)
 {
     CloudeoCtrl* ctrl = (CloudeoCtrl*)o;
-    if(cdo_no_error(err))
+    if(adl_no_error(err))
     {
         ctrl->_platformHandle = h;
-        cdo_get_version(&CloudeoCtrl::onVersion,h, ctrl);
+        adl_set_application_id(&CloudeoCtrl::onAppIdSet,h, ctrl, APP_ID);
+        adl_get_version(&CloudeoCtrl::onVersion,h, ctrl);
     }
     else
     {
@@ -163,7 +192,7 @@ void CloudeoCtrl::onPlatformReady(void* o, const CDOError* err, CDOH h)
     }
 }
 
-void CloudeoCtrl::onVersion(void* o, const CDOError* e, const CDOString* v)
+void CloudeoCtrl::onVersion(void* o, const ADLError* e, const ADLString* v)
 {
     CloudeoCtrl* ctrl = (CloudeoCtrl*) o;
     try
@@ -176,40 +205,48 @@ void CloudeoCtrl::onVersion(void* o, const CDOError* e, const CDOString* v)
 }
 
 
-void CloudeoCtrl::onDevices(void* o, const CDOError* e,
-                            CDODevice* devs, size_t len)
+void CloudeoCtrl::onDevices(void* o, const ADLError* e,
+                            ADLDevice* devs, size_t len)
 {
-    CDODevsHandler* rH = (CDODevsHandler*) o;
+    ADLDevsHandler* rH = (ADLDevsHandler*) o;
     std::map<std::string,std::string> result;
     for(int i=0;i<len;i++)
     {
-        std::string id = CDOHelpers::cdoString2Std(&(devs[i].id));
-        std::string label = CDOHelpers::cdoString2Std(&(devs[i].label));
+        std::string id = ADLHelpers::ADLString2Std(&(devs[i].id));
+        std::string label = ADLHelpers::ADLString2Std(&(devs[i].label));
         result[id] = label;
     }
     (*rH)(result);
     delete rH;
 }
 
-void CloudeoCtrl::onSetDevice(void* o, const CDOError* e)
+void CloudeoCtrl::onSetDevice(void* o, const ADLError* e)
 {
-    CDOSetDevHandler* rH = (CDOSetDevHandler*) o;
+    ADLSetDevHandler* rH = (ADLSetDevHandler*) o;
     (*rH)();
     delete rH;
 }
 
-void CloudeoCtrl::onLocalPreviewStarted(void* o, const CDOError* e,
-                                        const CDOString* v)
+void CloudeoCtrl::onLocalPreviewStarted(void* o, const ADLError* e,
+                                        const ADLString* v)
 {
-    CDOLocalVideoStartedHandler* rH = (CDOLocalVideoStartedHandler*) o;
-    (*rH)(CDOHelpers::cdoString2Std(v));
+    ADLLocalVideoStartedHandler* rH = (ADLLocalVideoStartedHandler*) o;
+    (*rH)(ADLHelpers::ADLString2Std(v));
     delete rH;
 }
 
-void CloudeoCtrl::onConnected(void* o, const CDOError* e)
+void CloudeoCtrl::onConnected(void* o, const ADLError* e)
 {
-    CDOConnectedHandler* rH = (CDOConnectedHandler*)o;
-    (*rH)(cdo_no_error(e));
+    if(e->err_code != 0)
+        qWarning() << "Failed to connect due to: " <<
+                      ADLHelpers::ADLString2QString(&(e->err_message));
+    ADLConnectedHandler* rH = (ADLConnectedHandler*)o;
+    (*rH)(adl_no_error(e));
     delete rH;
 
+}
+
+void CloudeoCtrl::onAppIdSet(void* o, const ADLError* e)
+{
+    qDebug() << "Application ID set";
 }

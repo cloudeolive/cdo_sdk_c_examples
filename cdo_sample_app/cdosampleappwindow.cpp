@@ -9,7 +9,7 @@ CdoSampleAppWindow::CdoSampleAppWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setupBindings();
-    _appController.initCDO();
+    _appController.initADL();
 }
 
 
@@ -45,11 +45,12 @@ void CdoSampleAppWindow::onMediaDevicesListChanged(int devType,
     }
 }
 
-void CdoSampleAppWindow::onCDOPlatformReady(void* pH, QString v)
+void CdoSampleAppWindow::onADLPlatformReady(void* pH, QString v)
 {
     ui->versionLbl->setText(v);
     ui->localRenderer->setPlatformHandle(pH);
     ui->remoteRenderer->setPlatformHandle(pH);
+    ui->connectBtn->setEnabled(true);
 }
 
 void CdoSampleAppWindow::onLocalPreviewSinkChanged(QString sinkId)
@@ -77,6 +78,16 @@ void CdoSampleAppWindow::onConnectClicked()
     bool publishVideo = ui->publishVideoChck->checkState() == Qt::Checked;
     _appController.connect(scopeId, publishAudio, publishVideo);
 }
+void CdoSampleAppWindow::onConnected()
+{
+    qDebug() << "Connection established";
+    ui->connectBtn->setEnabled(false);
+    ui->disconnectBtn->setEnabled(false);
+    QString scopeId = ui->scopeIdTxt->text();
+    bool publishAudio = ui->publishAudioChck->checkState() == Qt::Checked;
+    bool publishVideo = ui->publishVideoChck->checkState() == Qt::Checked;
+    _appController.connect(scopeId, publishAudio, publishVideo);
+}
 
 void CdoSampleAppWindow::setupBindings()
 {
@@ -87,11 +98,14 @@ void CdoSampleAppWindow::setupBindings()
 
 
     QObject::connect(&_appController, SIGNAL(cdoReady(void*,QString)),
-                     this,SLOT(onCDOPlatformReady(void*,QString)));
+                     this,SLOT(onADLPlatformReady(void*,QString)));
 
     QObject::connect(&_appController,
                      SIGNAL(mediaDevicesListChanged(int,QVariantMap)),
                      this, SLOT(onMediaDevicesListChanged(int,QVariantMap)));
+    QObject::connect(&_appController,
+                     SIGNAL(connected()),
+                     this, SLOT(onConnected()));
 
     QObject::connect(&_appController,
                      SIGNAL(localVideoSinkChanged(QString)),

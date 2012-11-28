@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-TARGET = cdo_sample_app
+TARGET = adl_sample_app
 TEMPLATE = app
 
 
@@ -21,15 +21,19 @@ HEADERS  += cdosampleappwindow.h \
     renderingwidget.h \
     cloudeoctrl.h \
     cdohelpers.h \
-    appcontroller.h
+    appcontroller.h \
+    cryptlite/sha256.h \
+    cryptlite/sha1.h \
+    cryptlite/hmac.h \
+    cryptlite/base64.h
 
 FORMS    += cdosampleappwindow.ui
 
-BOOST_HOME = $$PWD/../../../smlibs/include/boost-1_49
-CDO_HOME = $$PWD/../cloudeo_sdk
+BOOST_HOME = $$PWD/../../../adl_libs/include/boost-1_49
+ADL_HOME = $$PWD/../AddLive_sdk-win
 
-win32: LIBS += -L$$PWD/../../../smbuild/native_api/cloudeo_sdk_1.16.2.1/ -lcdo_sdk
+win32: LIBS += -L$$ADL_HOME -lcdo_sdk
 
-INCLUDEPATH += $$CDO_HOME
+INCLUDEPATH += $$ADL_HOME
 INCLUDEPATH += $$BOOST_HOME
 DEPENDPATH += $$PWD/../../../smbuild/native_api/cloudeo_sdk_1.16.2.1

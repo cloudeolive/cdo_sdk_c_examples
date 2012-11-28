@@ -2,7 +2,7 @@
 #define APPCONTROLLER_H
 
 #include <cloudeoctrl.h>
-#include <cloudeo_sdk.h>
+#include <addlive_sdk.h>
 #include <QObject>
 #include <QVariant>
 #include <QMap>
@@ -21,13 +21,13 @@ public:
 
     explicit AppController(QObject *parent = 0);
 
-    void initCDO();
+    void initADL();
 
     void connect(QString scopeId, bool pAudio, bool pVideo);
 
 
 //  Callbacks
-    void onCdoReady(CDOH, std::string v);
+    void onCdoReady(ADLH, std::string v);
     void onVideoDevices(std::map<std::string,std::string> devs,bool);
     void onAudioCaptureDevices(std::map<std::string,std::string> devs,bool);
     void onAudioOutputDevices(std::map<std::string,std::string> devs,bool);
@@ -35,8 +35,8 @@ public:
     void onLocalVideoStarted(std::string sinkId);
     void onConnected(bool succ);
 
-    static void onUserEvent(void* opaque, const CDOUserStateChangedEvent*);
-    static void onMediaEvent(void* opaque, const CDOUserStateChangedEvent*);
+    static void onUserEvent(void* opaque, const ADLUserStateChangedEvent*);
+    static void onMediaEvent(void* opaque, const ADLUserStateChangedEvent*);
 signals:
 
     void cdoReady(void* ph, QString v);
@@ -45,6 +45,7 @@ signals:
 
     void localVideoSinkChanged(QString);
     void remoteVideoSinkChanged(QString);
+    void connected();
 public slots:
 
     void disconnectBtnClicked();
@@ -55,8 +56,8 @@ public slots:
 
 private:
 
-    void onUserEvent(const CDOUserStateChangedEvent*);
-    void onMediaEvent(const CDOUserStateChangedEvent*);
+    void onUserEvent(const ADLUserStateChangedEvent*);
+    void onMediaEvent(const ADLUserStateChangedEvent*);
 
 
     CloudeoCtrl _cdoCtrl;

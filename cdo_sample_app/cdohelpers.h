@@ -1,23 +1,23 @@
-#ifndef CDOHELPERS_H
-#define CDOHELPERS_H
+#ifndef ADLHELPERS_H
+#define ADLHELPERS_H
 
-#include <cloudeo_sdk.h>
+#include <addlive_sdk.h>
 
 #include <string>
 #include <QString>
-class CDOHelpers
+class ADLHelpers
 {
 private:
-    CDOHelpers();
+    ADLHelpers();
 
 public:
 
-    static void stdString2CdoString(CDOString* target, const std::string& src);
-    static CDOString stdString2CdoString(const std::string& src);
-    static std::string cdoString2Std(const CDOString* src);
-    static QString cdoString2QString(const CDOString* src);
+    static void stdString2ADLString(ADLString* target, const std::string& src);
+    static ADLString stdString2ADLString(const std::string& src);
+    static std::string ADLString2Std(const ADLString* src);
+    static QString ADLString2QString(const ADLString* src);
 
-    static bool stringEq(const CDOString* a, const std::string& b);
+    static bool stringEq(const ADLString* a, const std::string& b);
 };
 
-#endif // CDOHELPERS_H
+#endif // ADLHELPERS_H

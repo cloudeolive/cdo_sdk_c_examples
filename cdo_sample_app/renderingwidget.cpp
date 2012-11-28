@@ -20,13 +20,13 @@ void RenderingWidget::startRender(std::string sinkId)
         _sinkIdToBeRendered = sinkId;
         stopRender();
     }
-    CDORenderRequest rRequest;
-    CDOHelpers::stdString2CdoString(&rRequest.sinkId, sinkId);
-    CDOHelpers::stdString2CdoString(&rRequest.filter, "fast_bilinear");
+    ADLRenderRequest rRequest;
+    ADLHelpers::stdString2ADLString(&rRequest.sinkId, sinkId);
+    ADLHelpers::stdString2ADLString(&rRequest.filter, "fast_bilinear");
     rRequest.mirror = true; rRequest.invalidateCallback =
     &RenderingWidget::invalidateClbck; rRequest.opaque = this;
     rRequest.windowHandle = NULL;
-    cdo_render_sink(&RenderingWidget::renderStarted,_platformHandle,this,
+    adl_render_sink(&RenderingWidget::renderStarted,_platformHandle,this,
                     &rRequest);
     setUpdatesEnabled(true);
 }
@@ -35,12 +35,12 @@ void RenderingWidget::stopRender()
 {
     if(_started)
     {
-        cdo_stop_render(&RenderingWidget::renderStopped, _platformHandle, this,
+        adl_stop_render(&RenderingWidget::renderStopped, _platformHandle, this,
                         _rendererId);
     }
 }
 
-void RenderingWidget::setPlatformHandle(CDOH handle)
+void RenderingWidget::setPlatformHandle(ADLH handle)
 {
     _platformHandle = handle;
 }
@@ -50,7 +50,7 @@ void RenderingWidget::paintEvent(QPaintEvent *e)
 {
     if(_started)
     {
-        CDODrawRequest req;
+        ADLDrawRequest req;
 
         QRect r;
         if(e)
@@ -70,7 +70,7 @@ void RenderingWidget::paintEvent(QPaintEvent *e)
         HDC hdc = painter.paintEngine()->getDC();
         req.windowHandle = hdc;
 
-        cdo_draw(_platformHandle, &req);
+        adl_draw(_platformHandle, &req);
     }
     else
     {
@@ -87,7 +87,7 @@ void RenderingWidget::invalidateClbck(void* o)
     ((RenderingWidget*)o)->invalidateClbckImpl();
 }
 
-void RenderingWidget::renderStarted(void* o, const CDOError* err,
+void RenderingWidget::renderStarted(void* o, const ADLError* err,
                                     int rendererId)
 {
     RenderingWidget* _this = (RenderingWidget*) o;
@@ -95,7 +95,7 @@ void RenderingWidget::renderStarted(void* o, const CDOError* err,
     _this->_started = true;
 }
 
-void RenderingWidget::renderStopped(void* o , const CDOError* err)
+void RenderingWidget::renderStopped(void* o , const ADLError* err)
 {
     RenderingWidget* _this = (RenderingWidget*) o;
     _this->sinkId = "";

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <string>
-#include <cloudeo_sdk.h>
+#include <addlive_sdk.h>
 
 class RenderingWidget : public QWidget
 {
@@ -15,12 +15,12 @@ public:
 
     void stopRender();
 
-    void setPlatformHandle(CDOH handle);
+    void setPlatformHandle(ADLH handle);
 
     static void invalidateClbck(void*);
 
-    static void renderStarted(void*, const CDOError*, int);
-    static void renderStopped(void*, const CDOError*);
+    static void renderStarted(void*, const ADLError*, int);
+    static void renderStopped(void*, const ADLError*);
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -34,7 +34,7 @@ private:
 
     void invalidateClbckImpl();
 
-    CDOH _platformHandle;
+    ADLH _platformHandle;
     std::string sinkId;
     std::string _sinkIdToBeRendered;
     int _rendererId;

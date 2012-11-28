@@ -1,36 +1,36 @@
 #include "cdohelpers.h"
 
-CDOHelpers::CDOHelpers()
+ADLHelpers::ADLHelpers()
 {
 }
 
 
-void CDOHelpers::stdString2CdoString(CDOString* target, const std::string& src)
+void ADLHelpers::stdString2ADLString(ADLString* target, const std::string& src)
 {
-    strncpy_s(target->body, CDO_STRING_MAX_LEN, src.c_str(),
+    strncpy_s(target->body, ADL_STRING_MAX_LEN, src.c_str(),
           src.length());
     target->length = src.length();
 }
 
-CDOString CDOHelpers::stdString2CdoString(const std::string& src)
+ADLString ADLHelpers::stdString2ADLString(const std::string& src)
 {
-    CDOString result;
-    stdString2CdoString(&result, src);
+    ADLString result;
+    stdString2ADLString(&result, src);
     return result;
 }
 
-std::string CDOHelpers::cdoString2Std(const CDOString* src)
+std::string ADLHelpers::ADLString2Std(const ADLString* src)
 {
     return std::string(src->body, src->length);
 }
 
-QString CDOHelpers::cdoString2QString(const CDOString* src)
+QString ADLHelpers::ADLString2QString(const ADLString* src)
 {
     return QString::fromAscii(src->body, src->length);
 }
 
 
-bool CDOHelpers::stringEq(const CDOString* a, const std::string& b)
+bool ADLHelpers::stringEq(const ADLString* a, const std::string& b)
 {
-    return b == CDOHelpers::cdoString2Std(a);
+    return b == ADLHelpers::ADLString2Std(a);
 }
